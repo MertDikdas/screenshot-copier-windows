@@ -1,7 +1,24 @@
 import socket
+from PIL import Image
+from io import BytesIO
+import time
 
 PORT = 5000
 PORT_TCP = 6000
+
+def copy_image_to_clipboard_from_bytes(img_bytes):
+    image = Image.open(BytesIO(img_bytes))
+
+    output = BytesIO()
+    image.convert("RGB").save(output,"BMP")
+    data = output.getvalue()[14:]
+    output.close()
+    win32clipboard.OpenClipboard()
+    win32clipboard.EmptyClipboard()
+    win32clipboard.SetClipboardData(win32clipboard.CF_DIB, data)
+    win32clipboard.CloseClipboard()
+    
+
 def receiver_broadcast():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(("", PORT))
@@ -25,21 +42,23 @@ def receiver_tcp_connection(addr):
     server.listen()
 
     print("Waiting for connection")
-
     conn, addr = server.accept()
-    print(f"Connected to : {addr}")
-
     while True:
-        data = conn.recv(1024)
-        if not data:
-            break
-        print("Message : ", data.decode())
 
-        message = input("Answer: ")
-        conn.send(message.encode())
-
+        print(f"Connected to : {addr}")
+        header=b""
+        while not header.endswith(b"\n"):
+            header+=conn.recv(1)
+        header = header.strip()
+        data = b""
+        while True:
+            chunk = conn.recv(4096)
+            if not chunk:
+                break
+            data += chunk
+        if header==b"IMG":
+            copy_image_to_clipboard_from_bytes(data)
     conn.close()
-    server.close()
 
 def handleReceiver():
     addr = receiver_broadcast()
