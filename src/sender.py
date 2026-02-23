@@ -1,7 +1,7 @@
 import socket
 
 PORT = 5000
-BROADCAST_IP = "255.255.255.255"
+BROADCAST_IP = "192.168.1.255"
 
 def sender_broadcast():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -10,6 +10,25 @@ def sender_broadcast():
     while True:
         message = input("Message: ")
         sock.sendto(message.encode(), (BROADCAST_IP, PORT))
+        data, addr = sock.recvfrom(1024)
+        if addr != None:
+            break
+    return addr
+
+def sender_tcp_connection(addr):
+    HOST = addr[0]   # Her yerden bağlantı kabul et
+    PORT = addr[1]
+
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect((HOST, PORT))
+
+    while True:
+        message = input("Mesaj yaz: ")
+        client.send(message.encode())
+
+        data = client.recv(1024)
+        print("Sunucudan gelen:", data.decode())
 
 def handleSender():
-    sender_broadcast()
+    addr = sender_broadcast()
+    sender_tcp_connection(addr)

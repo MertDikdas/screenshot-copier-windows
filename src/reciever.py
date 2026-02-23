@@ -11,10 +11,37 @@ def reciever_broadcast():
     while True:
         data, addr = sock.recvfrom(1024)
         print(f"{addr[0]} adress message's: ", data.decode())
+        sock.sendto(b"Handshake",addr)
         if addr != None:
             break
     return addr
 
+def reciever_tcp_connection(addr):
+    HOST = addr[0]   # Her yerden bağlantı kabul et
+    PORT = addr[1]
+
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((HOST, PORT))
+    server.listen()
+
+    print("Waiting for connection")
+
+    conn, addr = server.accept()
+    print(f"Connected to : {addr}")
+
+    while True:
+        data = conn.recv(1024)
+        if not data:
+            break
+        print("Message : ", data.decode())
+
+        message = input("Answer: ")
+        conn.send(message.encode())
+
+    conn.close()
+    server.close()
+
 def handleReciever():
     addr = reciever_broadcast()
-    print(addr)
+    reciever_tcp_connection(addr)
+    

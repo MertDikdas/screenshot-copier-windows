@@ -1,5 +1,5 @@
 from src.sender import handleSender
-from src.reciever import handleReciever
+from src.reciever import handleReceiver
 
 def main():
     choice = "A"
@@ -8,7 +8,7 @@ def main():
     if choice=="S":
         handleSender()
     elif choice=="R":
-        handleReciever()
+        handleReceiver()
     
 
 if __name__ == "__main__":
