@@ -1,6 +1,7 @@
 import socket
 
 PORT = 5000
+PORT_TCP = 6000
 BROADCAST_IP = "192.168.1.255"
 
 def sender_broadcast():
@@ -13,6 +14,7 @@ def sender_broadcast():
         data, addr = sock.recvfrom(1024)
         if addr != None:
             break
+    sock.close()
     return addr
 
 def sender_tcp_connection(addr):
@@ -20,7 +22,7 @@ def sender_tcp_connection(addr):
     PORT = addr[1]
 
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect((HOST, PORT))
+    client.connect((HOST, PORT_TCP))
 
     while True:
         message = input("Mesaj yaz: ")

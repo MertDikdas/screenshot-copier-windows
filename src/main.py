@@ -1,5 +1,5 @@
 from src.sender import handleSender
-from src.reciever import handleReceiver
+from src.receiver import handleReceiver
 
 def main():
     choice = "A"

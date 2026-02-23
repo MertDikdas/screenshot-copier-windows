@@ -1,8 +1,8 @@
 import socket
 
 PORT = 5000
-
-def reciever_broadcast():
+PORT_TCP = 6000
+def receiver_broadcast():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(("", PORT))
 
@@ -14,14 +14,14 @@ def reciever_broadcast():
         sock.sendto(b"Handshake",addr)
         if addr != None:
             break
+    sock.close()
     return addr
 
-def reciever_tcp_connection(addr):
+def receiver_tcp_connection(addr):
     HOST = addr[0]   # Her yerden bağlantı kabul et
-    PORT = addr[1]
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((HOST, PORT))
+    server.bind((HOST, PORT_TCP))
     server.listen()
 
     print("Waiting for connection")
@@ -41,7 +41,7 @@ def reciever_tcp_connection(addr):
     conn.close()
     server.close()
 
-def handleReciever():
-    addr = reciever_broadcast()
-    reciever_tcp_connection(addr)
+def handleReceiver():
+    addr = receiver_broadcast()
+    receiver_tcp_connection(addr)
     
