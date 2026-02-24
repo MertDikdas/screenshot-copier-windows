@@ -38,7 +38,7 @@ def receiver_broadcast():
     return addr
 
 def receiver_tcp_connection(addr):
-    HOST = addr[0]   # Her yerden bağlantı kabul et
+    HOST = [0,0,0,0]
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((HOST, PORT_TCP))
