@@ -1,8 +1,10 @@
 import socket
 import subprocess
 from pathlib import Path
+from PIL import ImageGrab
 import hashlib
 import time
+import sys
 
 PORT = 5000
 PORT_TCP = 6000
@@ -45,12 +47,18 @@ def sender_tcp_connection(addr, file_path:Path):
     print("🖼 sended!")
 
 def clipboard_has_image() -> bool:
-    # pngpaste hata verirse clipboard'ta görsel yoktur
-    result = subprocess.run(
-        ["pngpaste", str(TEMP_FILE)],
-        capture_output=True
-    )
-    return TEMP_FILE.exists() and result.returncode == 0
+    if sys.platform=="darwin":
+        result = subprocess.run(
+            ["pngpaste", str(TEMP_FILE)],
+            capture_output=True)
+        return result.returncode == 0
+    elif sys.platform== "win32":
+        img= ImageGrab.grabclipboard()
+        if img is None:
+            return false
+        img.save(TEMP_FILE,"PNG")
+
+    return False
 
 def handleSender():
     addr = sender_broadcast()
