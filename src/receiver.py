@@ -4,8 +4,6 @@ from io import BytesIO
 import win32clipboard
 import time
 import sys
-from AppKit import NSPasteboard, NSPasteboardTypePNG
-from Foundation import NSData
 
 PORT = 5000
 PORT_TCP = 6000
@@ -17,21 +15,10 @@ def copy_image_to_clipboard_from_bytes(img_bytes):
     image.convert("RGB").save(output,"BMP")
     data = output.getvalue()[14:]
     output.close()
-    if sys.system == "win32":
-        win32clipboard.OpenClipboard()
-        win32clipboard.EmptyClipboard()
-        win32clipboard.SetClipboardData(win32clipboard.CF_DIB, data)
-        win32clipboard.CloseClipboard()
-
-    elif sys.system == "darwin":
-        with open(image, "rb") as f:
-            data = f.read()
-
-        pb = NSPasteboard.generalPasteboard()
-        pb.clearContents()
-        pb.setData_forType_(NSData.dataWithBytes_length_(data, len(data)),
-                            NSPasteboardTypePNG)
-    
+    win32clipboard.OpenClipboard()
+    win32clipboard.EmptyClipboard()
+    win32clipboard.SetClipboardData(win32clipboard.CF_DIB, data)
+    win32clipboard.CloseClipboard()
 
     
 
