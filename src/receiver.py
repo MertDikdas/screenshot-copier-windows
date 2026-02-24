@@ -1,6 +1,7 @@
 import socket
 from PIL import Image
 from io import BytesIO
+import win32clipboard
 import time
 import sys
 from AppKit import NSPasteboard, NSPasteboardTypePNG
