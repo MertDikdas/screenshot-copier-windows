@@ -44,33 +44,42 @@ def receiver_tcp_connection(addr)->bool:
     server.bind((HOST, PORT_TCP))
     server.listen()
     
-    server.settimeout(60) 
+    server.settimeout(1000) 
     print("Waiting for connection")
     try:
         conn, addr = server.accept()
-        print("Bağlantı geldi:", addr)
+        print("Connection:", addr)
     except socket.timeout:
-        print("10 saniye içinde bağlantı gelmedi.")
+        print("No connection for 1000 sec.")
         return False
     
-    while True:
+    with conn:
+        while True:  # aynı bağlantıda sonsuz döngü
+            header = b""
+            while not header.endswith(b"\n"):
+                chunk = conn.recv(1)
+                if not chunk:
+                    print("Client disconnected")
+                    return False
+                header += chunk
 
-        print(f"Connected to : {addr}")
-        header=b""
-        while not header.endswith(b"\n"):
-            header+=conn.recv(1)
-        header = header.strip()
-        data = b""
-        while True:
-            chunk = conn.recv(4096)
-            if not chunk:
-                break
-            data += chunk
-        if header==b"IMG":
+            header = header.decode().strip()
+            parts = header.split()
+
+            if parts[0] != "IMG":
+                continue
+
+            image_size = int(parts[1])
+
+            data = b""
+            while len(data) < image_size:
+                chunk = conn.recv(min(4096, image_size - len(data)))
+                if not chunk:
+                    return False
+                data += chunk
+
             copy_image_to_clipboard_from_bytes(data)
-            break
-    conn.close()
-    return True
+            print("Screenshot received.")
 
 def handleReceiver():
     addr = receiver_broadcast()
