@@ -10,7 +10,9 @@ PORT = 5000
 PORT_TCP = 6000
 BROADCAST_IP = "192.168.1.255"
 
-TEMP_FILE = "screenshot.png"
+current_dir = Path().resolve()
+
+TEMP_FILE = current_dir / "screenshot.png"
 
 def get_image_hash(path: Path) -> str | None:
     if not path.exists():
