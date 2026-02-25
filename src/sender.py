@@ -40,12 +40,14 @@ def sender_tcp_connection(addr, file_path:Path):
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((HOST, PORT_TCP))
-        s.sendall(b"IMG\n")
         with open(file_path, "rb") as f:
-            while chunk := f.read(4096):
-                s.sendall(chunk)
-    print("🖼 sended!")
+            image_bytes = f.read()
 
+        header = f"IMG {len(image_bytes)}\n".encode()
+        s.sendall(header)
+        s.sendall(image_bytes)
+    print("🖼 sended!")
+    
 def clipboard_has_image() -> bool:
     img= ImageGrab.grabclipboard()
     if img is None:

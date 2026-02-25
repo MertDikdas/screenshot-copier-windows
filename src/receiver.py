@@ -54,32 +54,27 @@ def receiver_tcp_connection(addr)->bool:
         return False
     
     with conn:
-        while True:  # aynı bağlantıda sonsuz döngü
-            header = b""
-            while not header.endswith(b"\n"):
-                chunk = conn.recv(1)
-                if not chunk:
-                    print("Client disconnected")
-                    return False
-                header += chunk
+        header = b""
+        while not header.endswith(b"\n"):
+            chunk = conn.recv(1)
+            if not chunk:
+                return True
+            header += chunk
 
-            header = header.decode().strip()
-            parts = header.split()
+        header = header.decode().strip()
+        parts = header.split()
 
-            if parts[0] != "IMG":
-                continue
+        image_size = int(parts[1])
 
-            image_size = int(parts[1])
+        data = b""
+        while len(data) < image_size:
+            chunk = conn.recv(min(4096, image_size - len(data)))
+            if not chunk:
+                return False
+            data += chunk
 
-            data = b""
-            while len(data) < image_size:
-                chunk = conn.recv(min(4096, image_size - len(data)))
-                if not chunk:
-                    return False
-                data += chunk
-
-            copy_image_to_clipboard_from_bytes(data)
-            print("Screenshot received.")
+        copy_image_to_clipboard_from_bytes(data)
+        print("Screenshot received.")
 
 def handleReceiver():
     addr = receiver_broadcast()
