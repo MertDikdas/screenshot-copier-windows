@@ -25,7 +25,7 @@ def sender_broadcast():
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     sock.settimeout(1)  # ⬅️ 1 saniye bekle, sonra devam et
 
-    while True:
+    for i in range(0,200):
         sock.sendto(b"Discover", (BROADCAST_IP, PORT))
 
         try:
@@ -48,7 +48,7 @@ def sender_tcp_connection(addr, file_path:Path):
         header = f"IMG {len(image_bytes)}\n".encode()
         s.sendall(header)
         s.sendall(image_bytes)
-    print("🖼 sended!")
+    print("🖼 Sended!")
 #Checks the clipboard for is it same image
 def clipboard_has_image() -> bool:
     img= ImageGrab.grabclipboard()

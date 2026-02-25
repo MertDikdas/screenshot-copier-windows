@@ -46,10 +46,12 @@ def receiver_tcp_connection(addr)->bool:
     server.listen()
     #Timeout for long waits
     server.settimeout(1000) 
-    print("Waiting for connection")
+    print("Waiting for screenshot from sender")
     try:
-        conn, addr = server.accept()
-        print("Connection:", addr)
+        conn, conn_addr = server.accept()
+        if(conn_addr[0] != addr[0]):
+            return False
+        print("Connection:", conn_addr)
     except socket.timeout:
         print("No connection for 1000 sec.")
         return False
