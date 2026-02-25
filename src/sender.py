@@ -4,13 +4,13 @@ from pathlib import Path
 from PIL import ImageGrab
 import hashlib
 import time
-import sys
+import io
 
 PORT = 5000
 PORT_TCP = 6000
 BROADCAST_IP = "192.168.1.255"
 
-TEMP_FILE = Path("/tmp/clipboard_image.png")
+TEMP_FILE = "screenshot.png"
 
 def get_image_hash(path: Path) -> str | None:
     if not path.exists():
@@ -50,10 +50,14 @@ def sender_tcp_connection(addr, file_path:Path):
     
 def clipboard_has_image() -> bool:
     img= ImageGrab.grabclipboard()
-    if img is None:
-        return False
-    img.save(TEMP_FILE,"PNG")
-    return True
+    if img:
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+        image_bytes = buffer.getvalue()
+        if img:
+            img.save("screenshot.png", "PNG")
+        return True
+    return False
 
 def handleSender():
     addr = sender_broadcast()
