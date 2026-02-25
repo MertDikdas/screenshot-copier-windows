@@ -47,18 +47,11 @@ def sender_tcp_connection(addr, file_path:Path):
     print("🖼 sended!")
 
 def clipboard_has_image() -> bool:
-    if sys.platform=="darwin":
-        result = subprocess.run(
-            ["pngpaste", str(TEMP_FILE)],
-            capture_output=True)
-        return result.returncode == 0
-    elif sys.platform== "win32":
-        img= ImageGrab.grabclipboard()
-        if img is None:
-            return false
-        img.save(TEMP_FILE,"PNG")
-
-    return False
+    img= ImageGrab.grabclipboard()
+    if img is None:
+        return False
+    img.save(TEMP_FILE,"PNG")
+    return True
 
 def handleSender():
     addr = sender_broadcast()

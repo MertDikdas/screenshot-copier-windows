@@ -37,15 +37,22 @@ def receiver_broadcast():
     sock.close()
     return addr
 
-def receiver_tcp_connection(addr):
+def receiver_tcp_connection(addr)->bool:
     HOST = "0.0.0.0"
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((HOST, PORT_TCP))
     server.listen()
-
+    
+    server.settimeout(60) 
     print("Waiting for connection")
-    conn, addr = server.accept()
+    try:
+        conn, addr = server.accept()
+        print("Bağlantı geldi:", addr)
+    except socket.timeout:
+        print("10 saniye içinde bağlantı gelmedi.")
+        return False
+    
     while True:
 
         print(f"Connected to : {addr}")
@@ -63,10 +70,13 @@ def receiver_tcp_connection(addr):
             copy_image_to_clipboard_from_bytes(data)
             break
     conn.close()
+    return True
 
 def handleReceiver():
     addr = receiver_broadcast()
     while(True):
-        receiver_tcp_connection(addr)
+        connection = receiver_tcp_connection(addr)
+        if connection ==False:
+            handleReceiver()
         time.sleep(0.5)
     
