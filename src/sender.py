@@ -12,7 +12,7 @@ BROADCAST_IP = "192.168.1.255"
 
 current_dir = Path().resolve()
 
-TEMP_FILE = current_dir / "screenshot.png"
+TEMP_FILE = Path(current_dir / "screenshot.png")
 
 def get_image_hash(path: Path) -> str | None:
     if not path.exists():
