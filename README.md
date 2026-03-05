@@ -38,7 +38,7 @@ cd screenshot-copier-windows
 Create a virtual environment (recommended):
 ```bash
 python -m venv .venv
-.venv\Scripts\activate
+source .venv\Scripts\Activate
 ```
 ## Install requirements:
 ```bash
